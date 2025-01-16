@@ -8,3 +8,6 @@ services:
       - .:/app
     environment:
       - ENVIRONMENT=development
+      - LINKEDIN_EMAIL=${LINKEDIN_EMAIL}
+      - LINKEDIN_PASSWORD=${LINKEDIN_PASSWORD}
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN}

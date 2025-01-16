@@ -1,8 +1,10 @@
+# Use a lightweight Python base image
 FROM python:3.11-slim
 
+# Set the working directory inside the container
 WORKDIR /app
 
-# Install system dependencies required for Playwright
+# Install system dependencies required for Playwright (separate rarely-changing layers)
 RUN apt-get update && apt-get install -y \
     wget \
     libglib2.0-0 \
@@ -27,15 +29,17 @@ RUN apt-get update && apt-get install -y \
     libasound2 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first to leverage Docker cache
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Copy requirements file first to cache dependencies
+COPY requirements.txt /app/requirements.txt
 
-# Install Playwright browsers
-RUN playwright install --with-deps chromium
+# Install Python dependencies (only rebuild if requirements.txt changes)
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Copy your application
-COPY . .
+# Install Playwright browsers and their dependencies (rarely changes)
+RUN pip install playwright && playwright install --with-deps chromium
 
-# Your CMD or ENTRYPOINT command here
-CMD ["python", "run.py"] 
+# Copy the rest of the application (frequently changing)
+COPY . /app
+
+# Set the command to run your application
+CMD ["python", "run.py"]
