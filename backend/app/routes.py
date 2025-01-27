@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
 from .scraper import scrape_jobs
+from .comparer import Comparer
 import nest_asyncio
 
 nest_asyncio.apply() # apply nest_asyncio to allow asyncio to work with sync code
@@ -7,9 +8,14 @@ nest_asyncio.apply() # apply nest_asyncio to allow asyncio to work with sync cod
 main = Blueprint('main', __name__) # create a blueprint for the main route
 
 # test route
+# @main.route('/api/')
+# def test():
+#     return jsonify({'message': 'Hello, World!'})
+
 @main.route('/api/')
-def test():
-    return jsonify({'message': 'Hello, World!'})
+def test_analyzer():
+    comparer = Comparer()
+    return comparer.test()
 
 @main.route('/api/jobs')
 def get_jobs():

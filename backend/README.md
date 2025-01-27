@@ -14,9 +14,8 @@
    - Navigate to the `backend` folder using `cd backend`.
    - Create a virtual environment with `python3 -m venv venv`.
    - Activate the virtual environment using `source venv/bin/activate` on Mac/Linux or `venv\Scripts\activate` on Windows.
-   - Install the required dependencies with `pip install -r requirements.txt`.
-   - Run the Flask development server using `python run.py`.
-   - When finished, deactivate the virtual environment by running `deactivate`.
+   - Build the Docker container using `docker-compose build`.
+   - Run the Applications using `docker-compose up`.
 
 # Save dependencies to requirements.txt
 

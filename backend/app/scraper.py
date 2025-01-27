@@ -3,7 +3,7 @@ from playwright.async_api import async_playwright
 import os
 from dotenv import load_dotenv
 from .models import Job
-from .analyzer import JobAnalyzer
+from .comparer import Comparer
 import random
 
 load_dotenv()
@@ -14,7 +14,7 @@ class JobScraper:
         self.browser = None
         self.context = None
         self.page = None
-        self.analyzer = JobAnalyzer()  # single instance shared across all scraping
+        self.comparer = Comparer()
 
         print("Initialized scraper")
 
@@ -166,7 +166,7 @@ class JobScraper:
                     continue
 
                 if job['title'] and job['company']:
-                    analysis = self.analyzer.compare_resume_to_job(dummy_resume, job['description'])
+                    analysis = self.comparer.compare_resume_to_job(dummy_resume, job['description'])
                     job['matching_analysis'] = analysis["matching_analysis"]
                     job['summary'] = analysis["summary"]
                     job['score'] = analysis["score"]

@@ -12,5 +12,4 @@
   - app will process (or have it previously processed), navigate to glassdoor with the specefied requirements and key words from resume
   - scrape the top jobs that come up, then use LLMs from hugging face to get confidence of each job related to the resume, then give reasonings
 
-https://huggingface.co/datasets/cnamuangtoun/resume-job-description-fit
-https://www.youtube.com/watch?v=ACbjfUic34Q&t=163s
+SCRATCH FINE TUNING A CLASSIFICATION MODEL, GO ALL IN USING GROQ llama-3.3-70b-versatile WITH A STRONG PROMPT
