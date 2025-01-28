@@ -3,6 +3,7 @@
 :
 This will be a chrome extension the user can run for A SPECIFIC JOB
 Will have functionality for linkedin and glassdoor, maybe other job boards too
+Need to implement cloud storage for resumes as well (S3)
 
 - compare a job board to users resume
   - user will provide their resume
