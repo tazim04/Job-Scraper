@@ -11,3 +11,6 @@ Need to implement cloud storage for resumes as well (S3)
   - use groq llama to analyze and compare
 
 SCRATCH FINE TUNING A CLASSIFICATION MODEL, GO ALL IN USING GROQ llama-3.3-70b-versatile WITH A STRONG PROMPT
+
+When working on frotnend, run this:
+`import viteLogo from "/vite.svg";`
