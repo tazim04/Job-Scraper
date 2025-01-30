@@ -9,7 +9,7 @@ const Dashboard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <Greeting />
 
       {/* Either Job Scanner or Resume Upload */}
-      <div className="mt-5">{children}</div>
+      <div className="mt-2">{children}</div>
     </div>
   );
 };

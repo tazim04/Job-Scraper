@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import { useUser } from "../context/userContext";
 
 // Define possible pages & sub-pages
 type Page = "login" | "dashboard";
@@ -20,6 +27,18 @@ const NavigateContext = createContext<NavigateContextType | undefined>(
 export const NavigateProvider = ({ children }: { children: ReactNode }) => {
   const [currentPage, setCurrentPage] = useState<Page>("login");
   const [subPage, setSubPage] = useState<SubPage>(null);
+  const { user } = useUser();
+
+  // Set subPage based on user's resume availability when they log in
+  useEffect(() => {
+    if (user) {
+      setCurrentPage("dashboard");
+      setSubPage(user.resumeUrl ? "scanner" : "upload");
+    } else {
+      setCurrentPage("login");
+      setSubPage(null);
+    }
+  }, [user]);
 
   const navigate = (page: Page, sub?: SubPage) => {
     setCurrentPage(page);
