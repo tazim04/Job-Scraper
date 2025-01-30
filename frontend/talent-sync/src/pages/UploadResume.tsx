@@ -1,19 +1,47 @@
 import { useState } from "react";
 import { useNavigate } from "../hooks/useNavigate";
+import { uploadResume } from "../api/resume";
 import FileUploader from "../components/FileUploader";
+import { useUser } from "../context/userContext";
+import { logInfo, logError, logWarn } from "../utils/logger"; // Import logger
 
 const UploadResume = () => {
   const [file, setFile] = useState<File | null>(null);
+  const { user, setUser } = useUser();
   const { navigate } = useNavigate();
+  const [uploading, setUploading] = useState(false);
 
-  const handleUpload = () => {
-    if (!file) return;
+  const handleUpload = async () => {
+    if (!file || !user) {
+      logWarn("Upload aborted: No file or user found.");
+      return;
+    }
 
-    // TODO: Upload file to cloud storage
-    console.log("Uploading resume:", file.name);
+    setUploading(true); // Start uploading
+    logInfo("Uploading resume...", { fileName: file.name, email: user.email });
 
-    // Navigate to scanner after upload
-    navigate("dashboard", "scanner");
+    try {
+      // Call the API to upload the resume
+      const resumeUrl = await uploadResume(file, user.email);
+
+      logInfo("resumeUrl", { resumeUrl });
+
+      if (resumeUrl) {
+        logInfo("Upload successful!", { resumeUrl });
+
+        // Update user context with the resume URL
+        setUser({ ...user, resumeUrl });
+
+        // Navigate to the scanner page
+        navigate("dashboard", "scanner");
+      } else {
+        logError("Upload failed: No resume URL received.");
+      }
+    } catch (error) {
+      logError("Upload error:", error);
+    } finally {
+      setUploading(false); // Reset uploading state
+    }
   };
 
   return (
@@ -29,10 +57,10 @@ const UploadResume = () => {
 
       <button
         onClick={handleUpload}
-        className="bg-emerald-500 text-white px-4 py-2 rounded mt-4 disabled:opacity-50"
-        disabled={!file}
+        className="bg-green-500 text-white px-4 py-2 rounded mt-4 disabled:opacity-50"
+        disabled={!file || uploading}
       >
-        Upload & Continue
+        {uploading ? "Uploading..." : "Upload & Continue"}
       </button>
     </div>
   );

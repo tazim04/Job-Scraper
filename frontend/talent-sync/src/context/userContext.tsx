@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import User from "../types/user";
 import { getChromeStorage, setChromeStorage } from "../utils/chromeStorage";
+import { getResumeUrl } from "../api/resume";
 
 // Define Context Type
 type UserContextType = {
@@ -25,9 +26,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   // Load user from Chrome Storage on mount
   useEffect(() => {
     getChromeStorage("user")
-      .then((storedUser) => {
+      .then(async (storedUser) => {
         if (storedUser) {
-          setUser(storedUser);
+          // Fetch the resume URL from the backend
+          const resumeUrl = await getResumeUrl(storedUser.email);
+
+          // Update the user object with resumeUrl if it exists
+          setUser({ ...storedUser, resumeUrl });
         } else {
           setUser(null); // Ensure user state is set to null if no data exists
         }

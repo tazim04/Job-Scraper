@@ -3,7 +3,13 @@ from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)  # enable CORS for all routes
+    CORS(app, resources={
+    r"/api/*": {
+        "origins": ["chrome-extension://*", "http://localhost:*"],
+        "methods": ["POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
     app.config['SECRET_KEY'] = 'dev'
     app.config['DEBUG'] = True
