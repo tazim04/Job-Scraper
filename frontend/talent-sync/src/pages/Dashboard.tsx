@@ -2,8 +2,6 @@ import { useNavigate } from "../hooks/useNavigate";
 import Greeting from "../components/Greeting";
 
 const Dashboard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { navigate } = useNavigate();
-
   return (
     <div className="p-5">
       <Greeting />

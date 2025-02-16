@@ -6,16 +6,19 @@ import {
   useEffect,
 } from "react";
 import { useUser } from "../context/userContext";
+import JobResult from "../types/JobResult";
 
 // Define possible pages & sub-pages
 type Page = "login" | "dashboard";
-type SubPage = "upload" | "scanner" | null; // Only if logged in
+type SubPage = "upload" | "scanner" | "results" | null; // Only if logged in
 
 // Define context type
 type NavigateContextType = {
   currentPage: Page;
   subPage: SubPage;
-  navigate: (page: Page, subPage?: SubPage) => void;
+  resultsData: JobResult | null;
+  navigate: (page: Page, subPage?: SubPage, data?: JobResult) => void;
+  clearResults: () => void;
 };
 
 // Create a context with a default undefined value
@@ -27,6 +30,7 @@ const NavigateContext = createContext<NavigateContextType | undefined>(
 export const NavigateProvider = ({ children }: { children: ReactNode }) => {
   const [currentPage, setCurrentPage] = useState<Page>("login");
   const [subPage, setSubPage] = useState<SubPage>(null);
+  const [resultsData, setResultsData] = useState<JobResult | null>(null); // Add state for results data
   const { user } = useUser();
 
   // Set subPage based on user's resume availability when they log in
@@ -40,13 +44,22 @@ export const NavigateProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user]);
 
-  const navigate = (page: Page, sub?: SubPage) => {
+  const navigate = (page: Page, sub?: SubPage, data?: JobResult) => {
     setCurrentPage(page);
     setSubPage(sub ?? null);
+    if (sub === "results") {
+      setResultsData(data || null); // Store results data when navigating to results page
+    }
+  };
+
+  const clearResults = () => {
+    setResultsData(null); // Clear results data when navigating away
   };
 
   return (
-    <NavigateContext.Provider value={{ currentPage, subPage, navigate }}>
+    <NavigateContext.Provider
+      value={{ currentPage, subPage, resultsData, navigate, clearResults }}
+    >
       {children}
     </NavigateContext.Provider>
   );

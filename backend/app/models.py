@@ -12,12 +12,12 @@ class Job:
         self.company = company
         self.location = location
         self.link = link
-        self.salary = salary
         self.date_posted = date_posted
         self.description = description
         
         # from llama
         self.summary = summary
+        self.salary = salary
         self.key_technologies= key_technologies
         self.key_skills= key_skills
         self.location_type = location_type # remote, in-person, hybrid

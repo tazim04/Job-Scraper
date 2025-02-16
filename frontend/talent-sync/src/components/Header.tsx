@@ -16,7 +16,7 @@ const Header = () => {
         <img src="./icon.png" alt="logo" className="w-7" />
         <h3 className="text-xl font-semibold">
           <span>Talent</span>
-          <span className="text-emerald-500">Sync</span>
+          <span className="text-indigo-500">Sync</span>
         </h3>
       </div>
 

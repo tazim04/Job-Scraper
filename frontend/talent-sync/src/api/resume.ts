@@ -42,18 +42,12 @@ export const uploadResume = async (
 // Get resume url if it exists
 export const getResumeUrl = async (email: string): Promise<string | null> => {
   try {
-    const response = await fetch("http://127.0.0.1:5001/api/get_resume_url", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    const response = await axios.post(
+      "http://127.0.0.1:5001/api/get_resume_url",
+      { email }
+    );
 
-    if (!response.ok) {
-      throw new Error("Failed to get resume URL");
-    }
-
-    const data = await response.json();
-    return data.resumeUrl; // Returns either the resume URL or null
+    return response.data.resumeUrl; // Returns either the resume URL or null
   } catch (error) {
     console.error("Error getting resume URL:", error);
     return null;

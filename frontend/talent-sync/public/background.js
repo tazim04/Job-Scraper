@@ -60,3 +60,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 });
+
+// get cookies from linkedin
+// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+//   if (request.action === "getCookies") {
+//     chrome.cookies.getAll({ domain: ".linkedin.com" }, (cookies) => {
+//       if (chrome.runtime.lastError) {
+//         console.error(
+//           "Error fetching cookies:",
+//           chrome.runtime.lastError.message
+//         );
+//         sendResponse({ error: chrome.runtime.lastError.message });
+//       } else {
+//         console.log("Fetched cookies:", cookies);
+//         sendResponse({ cookies });
+//       }
+//     });
+//     return true;
+//   }
+// });

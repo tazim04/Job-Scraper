@@ -7,6 +7,7 @@ import { getResumeUrl } from "../api/resume";
 type UserContextType = {
   user: User;
   setUser: (user: User) => void; // Take User, return void
+  loading: boolean;
 };
 
 // Create Context
@@ -22,6 +23,7 @@ export const useUser = () => {
 // User Provider
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User>(null);
+  const [loading, setLoading] = useState(true);
 
   // Load user from Chrome Storage on mount
   useEffect(() => {
@@ -37,7 +39,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(null); // Ensure user state is set to null if no data exists
         }
       })
-      .catch((err) => console.warn("Error fetching user from storage:", err));
+      .catch((err) => console.warn("Error fetching user from storage:", err))
+      .finally(() => setLoading(false));
 
     // Listen for storage updates
     const handleStorageChange = (changes: {
@@ -61,7 +64,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser: updateUser }}>
+    <UserContext.Provider value={{ user, setUser: updateUser, loading }}>
       {children}
     </UserContext.Provider>
   );

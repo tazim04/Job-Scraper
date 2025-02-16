@@ -4,16 +4,18 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:extension": "vite build",
-    "watch": "vite build --watch",
+    "dev": "node public/generateManifest.js && vite",
+    "build": "node public/generateManifest.js && tsc -b && vite build",
+    "build:extension": "node public/generateManifest.js && vite build",
+    "watch": "node public/generateManifest.js && vite build --watch",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.0",
     "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "lucide-react": "^0.475.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.3",

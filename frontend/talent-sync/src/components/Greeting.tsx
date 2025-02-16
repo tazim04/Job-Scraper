@@ -8,9 +8,9 @@ const Greeting = () => {
       <img
         src={user?.picture}
         alt="Profile Picture"
-        className="rounded-full border-2 border-black w-20 h-20 object-cover"
+        className="rounded-full border-2 border-black w-18 object-cover"
       />
-      <h1 className="text-2xl mt-2">Hi {user?.name}!</h1>
+      <h1 className="text-xl mt-2">Hi {user?.name}!</h1>
     </div>
   );
 };
