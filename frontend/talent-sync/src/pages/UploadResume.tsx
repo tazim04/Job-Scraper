@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "../hooks/useNavigate";
 import { uploadResume } from "../api/resume";
 import FileUploader from "../components/FileUploader";
 import { useUser } from "../context/userContext";
-import { logInfo, logError, logWarn } from "../utils/logger"; // Import logger
+import { logInfo, logError, logWarn } from "../utils/logger";
 
 const UploadResume = () => {
   const [file, setFile] = useState<File | null>(null);

@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useUser } from "../context/userContext";
 import JobResult from "../types/JobResult";
+import { logInfo } from "../utils/logger";
 
 // Define possible pages & sub-pages
 type Page = "login" | "dashboard";
@@ -37,6 +38,8 @@ export const NavigateProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (user) {
       setCurrentPage("dashboard");
+      logInfo("useEffect in useNavigate.tsx!");
+      logInfo("User: ", user);
       setSubPage(user.resumeUrl ? "scanner" : "upload");
     } else {
       setCurrentPage("login");

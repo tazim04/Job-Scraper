@@ -42,7 +42,7 @@ const Results = () => {
   };
 
   return (
-    <div className="max-h-[30rem] overflow-y-auto p-4 bg-white">
+    <div className="h-[23rem] overflow-y-auto p-4 bg-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button

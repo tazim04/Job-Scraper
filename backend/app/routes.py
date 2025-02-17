@@ -89,10 +89,8 @@ def upload_resume():
     file = request.files["file"]  # Get file from request
     email = request.form["email"]  # Get email from request
 
-    # Define S3 path: Store resumes under user-specific folders
-    s3_path = f"resumes/{email}/{file.filename}"  
+    s3_path = f"resumes/{email}/resume.pdf"  
 
-    # Upload directly to S3 without saving locally
     success = upload_file_to_s3(file, s3_path)  
 
     if success:

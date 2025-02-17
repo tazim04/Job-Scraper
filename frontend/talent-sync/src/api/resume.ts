@@ -24,7 +24,7 @@ export const uploadResume = async (
     );
 
     logInfo("Resume uploaded successfully!", response.data);
-    return response.data.resumeUrl;
+    return response.data.resume_url;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       logError("Axios error:", {
