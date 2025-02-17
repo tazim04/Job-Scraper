@@ -61,7 +61,7 @@ class Comparer:
             KEY REQUIREMENTS:
             1. Always address the user directly using "you" and "your" (never "the candidate" or "the resume")
             2. Maintain strict technical accuracy in skill categorization
-            3. Provide specific, actionable recommendations
+            3. Provide specific, actionable recommendations, but don't make them too long. Make them concise.
 
             TECHNOLOGY NAMING CONVENTIONS:
             - Use ALL CAPS only for true acronyms (HTML, CSS, AWS, SQL)

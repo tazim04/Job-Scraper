@@ -42,7 +42,7 @@ const Results = () => {
   };
 
   return (
-    <div className="h-[23rem] overflow-y-auto p-4 bg-white">
+    <div className="h-[25rem] overflow-y-auto px-1 py-3 bg-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
@@ -61,7 +61,7 @@ const Results = () => {
       {/* Job Title and Company */}
       <div className="bg-blue-50 p-6 rounded-lg mb-6">
         <div className="mb-3">
-          <h1 className="text-lg font-bold text-gray-900 text-center mb-5">
+          <h1 className="text-lg font-bold text-gray-900 text-center mb-2">
             {resultsData.title}
           </h1>
           <p className="text-gray-600 text-base text-center">
@@ -79,7 +79,7 @@ const Results = () => {
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Compatibility Score
           </h3>
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 text-sm text-center">
             Your resume matches {resultsData.score}% of the job requirements.
           </p>
         </div>
@@ -142,7 +142,7 @@ const Results = () => {
           </Section>
 
           <Section title="Recommendations" icon={<Star size={18} />}>
-            <ul className="list-disc list-inside space-y-2 pl-2">
+            <ul className="list-disc list-outside space-y-2 pl-2">
               {resultsData.recommendations?.map((rec, index) => (
                 <li key={index} className="text-sm text-gray-700">
                   {rec}
