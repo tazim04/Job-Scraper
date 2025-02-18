@@ -12,8 +12,10 @@ export type JobResult = {
   matching_analysis: string;
   score: number;
   recommendations: string[];
-  salary: string | null;
+  salary: string;
   summary: string;
+  error?: any;
+  reason?: any;
 };
 
 export default JobResult;

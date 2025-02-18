@@ -53,3 +53,12 @@ export const getResumeUrl = async (email: string): Promise<string | null> => {
     return null;
   }
 };
+
+export const viewResume = async (email: string): Promise<void> => {
+  try {
+    const proxyUrl = `http://127.0.0.1:5001/api/view_resume/${email}`;
+    chrome.tabs.create({ url: proxyUrl }); // Open proxy URL instead of presigned S3 URL
+  } catch (error) {
+    logError("Error fetching resume:", error);
+  }
+};

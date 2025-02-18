@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, redirect
 from .scrapers.glassdoor_scraper import JobScraperGlassdoor
 from .scrapers.linkedin_scraper import JobScraperLinkedIn
 from .comparer import Comparer
@@ -6,10 +6,9 @@ import nest_asyncio
 import os
 import json
 from .aws_config import AWS_BUCKET_NAME, AWS_REGION
-from .s3_util import upload_file_to_s3, generate_presigned_url
+from .s3_util import upload_file_to_s3, generate_presigned_url, get_obj
 from dotenv import load_dotenv
 from urllib.parse import urlparse, parse_qs
-import re
 
 
 nest_asyncio.apply() # apply nest_asyncio to allow asyncio to work with sync code
@@ -70,10 +69,11 @@ def compare():
         job.key_skills = groq_res.get("key_skills")
         job.location_type = groq_res.get("location_type")
         job.job_type = groq_res.get("job_type")
+        job.salary = groq_res.get("salary")
         job.matching_analysis = groq_res.get("matching_analysis")
         job.score = groq_res.get("score")
         job.recommendations = groq_res.get("recommendations")
-
+        
         return jsonify(job.to_dict())      
 
     except Exception as e:
@@ -116,3 +116,11 @@ def get_resume_url():
         return jsonify({"resumeUrl": file_url}), 200
     else:
         return jsonify({"resumeUrl": None})  # Resume does not exist
+    
+
+
+@main.route("/api/view_resume/<email>", methods=["GET"])
+def view_resume(email):
+    """Securely serve the resume without exposing S3 URL."""
+    file_path = f"resumes/{email}/resume.pdf"
+    return get_obj(file_path)

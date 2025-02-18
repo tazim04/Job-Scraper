@@ -6,11 +6,9 @@ export const fetchAnalysis = async (
   link: string
 ): Promise<any | null> => {
   try {
-    // const cookies = await getLinkedInCookies();
     logInfo("Sending resume path to Flask API for analysis...", {
       resume_path,
       link,
-      // cookies,
     });
 
     const response = await axios.post(
@@ -18,7 +16,6 @@ export const fetchAnalysis = async (
       {
         resume_path,
         link,
-        // cookies,
       },
       {
         headers: {
@@ -30,28 +27,48 @@ export const fetchAnalysis = async (
     logInfo("Analysis received successfully!", response.data);
     return response.data; // Return structured analysis result
   } catch (error) {
+    // Check if the error is an Axios error
     if (axios.isAxiosError(error)) {
-      logError("Axios error while fetching analysis:", {
-        message: error.message,
-        response: error.response?.data || "No response data",
-        status: error.response?.status || "No status",
-      });
-    } else {
-      logError("Unexpected error:", error);
+      logInfo("axios error!");
+      const errorMessage = error.response?.data?.error;
+
+      logInfo(
+        "429 error: ",
+        (error.response?.data?.error).includes("Error code: 429")
+      );
+
+      const limitExceeded = errorMessage.includes("Error code: 429");
+
+      // Handle rate limit errors
+      if (limitExceeded) {
+        // Extract retry time (if available)
+        const retryMatch =
+          typeof errorMessage === "string"
+            ? errorMessage.match(/Please try again in (\d+)m(\d+\.\d+)s/)
+            : null;
+        const retryMinutes = retryMatch ? parseInt(retryMatch[1], 10) : 0;
+        const retrySeconds = retryMatch ? parseFloat(retryMatch[2]) : 0;
+
+        return {
+          error: "Rate Limit Exceeded",
+          reason: `TalentSync has temporarily reached its processing limit. Please try again in ${retryMinutes}m ${Math.round(
+            retrySeconds
+          )}s.`,
+        };
+      }
+
+      // Handle other errors
+      return {
+        error: "Analysis Failed",
+        reason: errorMessage || "An unknown error occurred.",
+      };
     }
-    return null;
+
+    // Handle non-Axios errors
+    logError("Unexpected error:", error);
+    return {
+      error: "Unexpected Error",
+      reason: "Something went wrong. Please try again later.",
+    };
   }
 };
-
-// // helper method for getting linkedin auth
-// const getLinkedInCookies = async (): Promise<any[]> => {
-//   return new Promise((resolve, reject) => {
-//     chrome.runtime.sendMessage({ action: "getCookies" }, (cookies) => {
-//       if (chrome.runtime.lastError) {
-//         reject(new Error(chrome.runtime.lastError.message));
-//       } else {
-//         resolve(cookies);
-//       }
-//     });
-//   });
-// };

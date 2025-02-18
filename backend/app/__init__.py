@@ -6,8 +6,9 @@ def create_app():
     CORS(app, resources={
     r"/api/*": {
         "origins": ["chrome-extension://*", "http://localhost:*"],
-        "methods": ["POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"]
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"],
+        "supports_credentials": True
     }
 })
 

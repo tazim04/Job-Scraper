@@ -3,6 +3,7 @@ import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
 from dotenv import load_dotenv
 from .aws_config import s3_client, AWS_BUCKET_NAME
+from flask import Response
 
 # Load environment variables
 load_dotenv()
@@ -36,6 +37,20 @@ def delete_file_from_s3(object_name: str) -> bool:
     except Exception as e:
         print(f"Error deleting file from S3: {e}")
         return False
+    
+def get_obj(file_path: str) -> Response:
+    
+    try: 
+        s3_object = s3_client.get_object(Bucket=AWS_BUCKET_NAME, Key=file_path)
+        return Response(
+            s3_object["Body"].read(),
+            content_type="application/pdf",
+            headers={"Content-Disposition": "inline; filename=resume.pdf"}  # Opens in browser
+        )
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "NoSuchKey":
+            return {"error": "Resume not found"}, 404
+        return {"error": "Error retrieving file"}, 500
 
 
 def generate_presigned_url(object_name: str, expiration: int = 3600) -> str:
@@ -53,7 +68,11 @@ def generate_presigned_url(object_name: str, expiration: int = 3600) -> str:
         # Generate a presigned URL
         url = s3_client.generate_presigned_url(
             "get_object",
-            Params={"Bucket": AWS_BUCKET_NAME, "Key": object_name},
+            Params={
+                    "Bucket": AWS_BUCKET_NAME, 
+                    "Key": object_name, 
+                    "ResponseContentDisposition": "inline",  # Ensure file opens in another tab in the browser
+                    "ResponseContentType": "application/pdf",},
             ExpiresIn=expiration,
         )
         return url
