@@ -1,4 +1,3 @@
-import { useNavigate } from "../hooks/useNavigate";
 import Greeting from "../components/Greeting";
 
 const Dashboard: React.FC<{ children: React.ReactNode }> = ({ children }) => {

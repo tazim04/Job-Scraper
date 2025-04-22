@@ -56,7 +56,7 @@ def compare():
         # Use the constructed guest URL instead of original link
         job = linkedin_scraper.scrape_job(guest_url)
         
-        # Rest of your comparison logic...
+        # Comparison analysis
         groq_res = comparer.compare(resume_path, job.description)
         
         print(groq_res)

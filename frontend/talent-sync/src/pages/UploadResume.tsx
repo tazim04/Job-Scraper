@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "../hooks/useNavigate";
 import { uploadResume } from "../api/resume";
 import FileUploader from "../components/FileUploader";

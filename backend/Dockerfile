@@ -1,4 +1,4 @@
-# Use a lightweight Python base image
+# Use a Debian-based Python image
 FROM python:3.11-slim
 
 # Set the working directory inside the container
