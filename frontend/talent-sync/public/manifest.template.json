@@ -4,6 +4,7 @@
   "description": "Check if you're a perfect fit for any job!",
   "version": "1.0",
   "author": "Tazim Khan",
+  "key": "${KEY}",
   "action": {
     "default_popup": "index.html",
     "default_icon": "icon.png"

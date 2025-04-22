@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
 import { useUser } from "../context/userContext";
 import { Loader2, LogIn } from "lucide-react";
+import { logError, logInfo } from "../utils/logger";
 
 // Import Chrome Storage utils
 import User from "../types/user";
@@ -13,10 +14,14 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    logInfo("[Login] Login button pressed!");
     try {
       setLoading(true);
       const token = await getAuthToken();
-      if (!token) return;
+      if (!token) {
+        logInfo("[Login] No token received!");
+        return;
+      }
 
       const response = await fetch(
         "https://www.googleapis.com/oauth2/v2/userinfo",
@@ -32,6 +37,7 @@ const Login = () => {
 
       const userInfo = await response.json();
       const resumeUrl = await getResumeUrl(userInfo.email);
+
       const userData: User = {
         name: userInfo.name,
         email: userInfo.email,
@@ -39,9 +45,11 @@ const Login = () => {
         resumeUrl: resumeUrl || undefined,
       };
 
+      logInfo(userData);
+
       setUser(userData);
     } catch (error) {
-      console.error("Login failed:", error);
+      logError(`[Login] Login failed! ${error}`);
     } finally {
       setLoading(false);
     }

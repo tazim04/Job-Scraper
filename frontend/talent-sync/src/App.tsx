@@ -2,6 +2,7 @@ import "./App.css";
 import { Loader2 } from "lucide-react";
 import { useUser } from "./context/userContext";
 import { NavigateProvider, useNavigate } from "./hooks/useNavigate";
+import { UserProvider } from "./context/userContext";
 
 // Components
 import Header from "./components/Header";
@@ -13,9 +14,11 @@ import Results from "./pages/Results";
 
 const App: React.FC = () => {
   return (
-    <NavigateProvider>
-      <MainApp />
-    </NavigateProvider>
+    <UserProvider>
+      <NavigateProvider>
+        <MainApp />
+      </NavigateProvider>
+    </UserProvider>
   );
 };
 

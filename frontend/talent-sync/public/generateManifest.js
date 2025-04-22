@@ -20,6 +20,7 @@ try {
 
   // Replace placeholders with environment variables
   manifest = manifest
+    .replace("${KEY}", process.env.KEY || "")
     .replace("${OAUTH_CLIENT_ID}", process.env.OAUTH_CLIENT_ID || "")
     .replace("${BACKEND_URL}", process.env.BACKEND_URL || "");
 
