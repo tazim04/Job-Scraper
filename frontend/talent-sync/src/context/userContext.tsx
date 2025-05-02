@@ -2,12 +2,21 @@ import { createContext, useContext, useEffect, useState } from "react";
 import User from "../types/user";
 import { getChromeStorage, setChromeStorage } from "../utils/chromeStorage";
 import { getResumeUrl } from "../api/resume";
+import { AWSCredentials } from "../types/AWSCredentials";
+// import { useAuth } from "../hooks/useAuth";
 
 // Define Context Type
 type UserContextType = {
   user: User;
   setUser: (user: User) => void; // Take User, return void
   loading: boolean;
+};
+
+// Check if AWS credentials are still valid
+const isAWSCredentialsValid = (credentials: AWSCredentials): boolean => {
+  if (!credentials || typeof credentials.expiresAt !== "number") return false; // If no credentials, or credentials is not a number, false
+  const now = Date.now();
+  return now < credentials.expiresAt; // Check if the credentials have expired
 };
 
 // Create Context
@@ -24,23 +33,46 @@ export const useUser = () => {
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User>(null);
   const [loading, setLoading] = useState(true);
+  // const { getTokensAndCredentials } = useAuth();
 
   // Load user from Chrome Storage on mount
   useEffect(() => {
-    getChromeStorage("user")
-      .then(async (storedUser) => {
-        if (storedUser) {
-          // Fetch the resume URL from the backend
-          const resumeUrl = await getResumeUrl(storedUser.email);
+    const initUser = async () => {
+      try {
+        const storedUser = await getChromeStorage("user");
 
-          // Update the user object with resumeUrl if it exists
-          setUser({ ...storedUser, resumeUrl });
-        } else {
-          setUser(null); // Ensure user state is set to null if no data exists
+        // Check if AWS credentials are still valid
+        const validCreds = isAWSCredentialsValid(storedUser?.awsCredentials);
+
+        // Expired, get new credentials
+        if (!validCreds) {
+          // const tokensAndCreds = await getTokensAndCredentials();
+          // if (!tokensAndCreds) throw new Error("Failed to refresh credentials");
+
+          // storedUser.awsCredentials = {
+          //   ...tokensAndCreds.awsCredentials,
+          // };
+
+          // await setChromeStorage("user", storedUser);
+
+          return;
         }
-      })
-      .catch((err) => console.warn("Error fetching user from storage:", err))
-      .finally(() => setLoading(false));
+
+        // Update resume URL
+        const resumeUrl = await getResumeUrl(
+          storedUser.email,
+          storedUser.awsCredentials
+        );
+        setUser({ ...storedUser, resumeUrl });
+      } catch (err) {
+        console.warn("Error initializing user:", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initUser();
 
     // Listen for storage updates
     const handleStorageChange = (changes: {

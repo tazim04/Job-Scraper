@@ -1,8 +1,11 @@
+import { AWSCredentials } from "./AWSCredentials";
+
 export type User = {
   name: string;
   email: string;
   picture: string;
   resumeUrl?: string; // URL to uploaded resume (S3)
+  awsCredentials?: AWSCredentials;
 } | null; // user can start as null
 
 export default User;

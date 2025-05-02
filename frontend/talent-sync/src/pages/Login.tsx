@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGoogleAuth } from "../hooks/useGoogleAuth";
+import { useAuth } from "../hooks/useAuth";
 import { useUser } from "../context/userContext";
 import { Loader2, LogIn } from "lucide-react";
 import { logError, logInfo } from "../utils/logger";
@@ -9,7 +9,7 @@ import User from "../types/user";
 import { getResumeUrl } from "../api/resume";
 
 const Login = () => {
-  const { getAuthToken } = useGoogleAuth();
+  const { getTokensAndCreds } = useAuth();
   const { setUser } = useUser();
   const [loading, setLoading] = useState(false);
 
@@ -17,17 +17,21 @@ const Login = () => {
     logInfo("[Login] Login button pressed!");
     try {
       setLoading(true);
-      const token = await getAuthToken();
-      if (!token) {
-        logInfo("[Login] No token received!");
+      const { awsCredentials, accessToken } = await getTokensAndCreds();
+      if (!accessToken) {
+        logInfo("[Login] No accessToken received!");
+        return;
+      }
+      if (!awsCredentials) {
+        logInfo("[Login] No aws credentials received!");
         return;
       }
 
+      // fetch user info from google
       const response = await fetch(
         "https://www.googleapis.com/oauth2/v2/userinfo",
         {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
 
@@ -36,18 +40,17 @@ const Login = () => {
       }
 
       const userInfo = await response.json();
-      const resumeUrl = await getResumeUrl(userInfo.email);
+      const resumeUrl = await getResumeUrl(userInfo.email, awsCredentials);
 
-      const userData: User = {
+      const user: User = {
         name: userInfo.name,
         email: userInfo.email,
         picture: userInfo.picture,
         resumeUrl: resumeUrl || undefined,
+        awsCredentials: awsCredentials,
       };
 
-      logInfo(userData);
-
-      setUser(userData);
+      setUser(user);
     } catch (error) {
       logError(`[Login] Login failed! ${error}`);
     } finally {

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Loader2, FileScan, FileUser } from "lucide-react";
 import { useUser } from "../context/userContext";
 import { fetchAnalysis } from "../api/analyze";
-import { viewResume } from "../api/resume";
 import { useNavigate } from "../hooks/useNavigate";
 
 const JobScanner = () => {
@@ -39,7 +38,7 @@ const JobScanner = () => {
       console.error("No resume URL found!");
       return;
     }
-    viewResume(user.email);
+    window.open(user.resumeUrl, "_blank");
   };
 
   return (

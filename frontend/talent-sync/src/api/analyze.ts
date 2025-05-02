@@ -6,7 +6,7 @@ export const fetchAnalysis = async (
   link: string
 ): Promise<any | null> => {
   try {
-    logInfo("Sending resume path to Flask API for analysis...", {
+    logInfo("Sending resume path to backend API for analysis...", {
       resume_path,
       link,
     });
@@ -19,33 +19,27 @@ export const fetchAnalysis = async (
       },
       {
         headers: {
-          "Content-Type": "application/json", // Sending JSON data
+          "Content-Type": "application/json",
         },
       }
     );
 
     logInfo("Analysis received successfully!", response.data);
-    return response.data; // Return structured analysis result
+    return response.data;
   } catch (error) {
-    // Check if the error is an Axios error
     if (axios.isAxiosError(error)) {
-      logInfo("axios error!");
-      const errorMessage = error.response?.data?.error;
+      logInfo("Axios error caught.");
 
-      logInfo(
-        "429 error: ",
-        (error.response?.data?.error).includes("Error code: 429")
-      );
+      const errorMessage = error.response?.data?.error ?? "";
 
-      const limitExceeded = errorMessage.includes("Error code: 429");
+      const limitExceeded =
+        typeof errorMessage === "string" &&
+        errorMessage.includes("Error code: 429");
 
-      // Handle rate limit errors
       if (limitExceeded) {
-        // Extract retry time (if available)
-        const retryMatch =
-          typeof errorMessage === "string"
-            ? errorMessage.match(/Please try again in (\d+)m(\d+\.\d+)s/)
-            : null;
+        const retryMatch = errorMessage.match(
+          /Please try again in (\d+)m(\d+\.\d+)s/
+        );
         const retryMinutes = retryMatch ? parseInt(retryMatch[1], 10) : 0;
         const retrySeconds = retryMatch ? parseFloat(retryMatch[2]) : 0;
 
@@ -57,15 +51,13 @@ export const fetchAnalysis = async (
         };
       }
 
-      // Handle other errors
       return {
         error: "Analysis Failed",
         reason: errorMessage || "An unknown error occurred.",
       };
     }
 
-    // Handle non-Axios errors
-    logError("Unexpected error:", error);
+    logError("Unexpected non-Axios error:", error);
     return {
       error: "Unexpected Error",
       reason: "Something went wrong. Please try again later.",

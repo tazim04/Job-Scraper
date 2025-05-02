@@ -1,5 +1,9 @@
 import axios from "axios";
 import { logInfo, logError } from "../utils/logger";
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import { AWSCredentials } from "../types/AWSCredentials";
+
+const REGION = import.meta.env.VITE_AWS_REGION;
 
 // Upload resume file
 export const uploadResume = async (
@@ -13,18 +17,41 @@ export const uploadResume = async (
   try {
     logInfo("Sending resume to Flask API...", { fileName: file.name, email });
 
-    const response = await axios.post(
-      "http://127.0.0.1:5001/api/upload_resume",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data", // Required for file uploads
-        },
-      }
+    // Get signed URL from Lambda
+    const signedUrlRes = await axios.post(
+      "https://duzydv33oa.execute-api.ca-central-1.amazonaws.com/default/talentSyncDownload",
+      { email }
     );
 
-    logInfo("Resume uploaded successfully!", response.data);
-    return response.data.resume_url;
+    const signedUrl = signedUrlRes.data.uploadUrl;
+
+    logInfo("Signed URL received, uploading to S3...", signedUrl);
+
+    // Upload file directly to S3 bucket using the URL
+    await axios.put(signedUrl, file, {
+      headers: {
+        "Content-Type": file.type || "application/pdf", // Properly set the content type
+      },
+    });
+
+    logInfo("Resume uploaded directly to S3!");
+
+    // Return public location
+    const publicUrl = signedUrl.split("?")[0]; // Remove query params
+    return publicUrl;
+
+    // const response = await axios.post(
+    //   "http://127.0.0.1:5001/api/upload_resume",
+    //   formData,
+    //   {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data", // Required for file uploads
+    //     },
+    //   }
+    // );
+
+    // logInfo("Resume uploaded successfully!", response.data);
+    // return response.data.resume_url;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       logError("Axios error:", {
@@ -39,26 +66,30 @@ export const uploadResume = async (
   }
 };
 
-// Get resume url if it exists
-export const getResumeUrl = async (email: string): Promise<string | null> => {
-  try {
-    const response = await axios.post(
-      "http://127.0.0.1:5001/api/get_resume_url",
-      { email }
-    );
+export const getResumeUrl = async (
+  email: string,
+  awsCredentials: AWSCredentials
+): Promise<string | null> => {
+  const lambda = new LambdaClient({
+    region: REGION,
+    credentials: awsCredentials,
+  });
 
-    return response.data.resumeUrl; // Returns either the resume URL or null
-  } catch (error) {
-    console.error("Error getting resume URL:", error);
-    return null;
-  }
-};
+  const payload = { email };
 
-export const viewResume = async (email: string): Promise<void> => {
-  try {
-    const proxyUrl = `http://127.0.0.1:5001/api/view_resume/${email}`;
-    chrome.tabs.create({ url: proxyUrl }); // Open proxy URL instead of presigned S3 URL
-  } catch (error) {
-    logError("Error fetching resume:", error);
-  }
+  const command = new InvokeCommand({
+    FunctionName: "talentSyncDownload",
+    Payload: new TextEncoder().encode(JSON.stringify(payload)), // Must encode
+  });
+
+  const response = await lambda.send(command);
+
+  // Decode payload buffer
+  const decodedPayload = new TextDecoder("utf-8").decode(response.Payload);
+  const outerJson = JSON.parse(decodedPayload);
+
+  // Parse the inner body if it exists
+  const parsed = outerJson.body ? JSON.parse(outerJson.body) : {};
+
+  return parsed.resumeUrl || null;
 };
