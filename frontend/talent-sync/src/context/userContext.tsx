@@ -3,7 +3,7 @@ import User from "../types/user";
 import { getChromeStorage, setChromeStorage } from "../utils/chromeStorage";
 import { getResumeUrl } from "../api/resume";
 import { AWSCredentials } from "../types/AWSCredentials";
-// import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 
 // Define Context Type
 type UserContextType = {
@@ -33,7 +33,7 @@ export const useUser = () => {
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User>(null);
   const [loading, setLoading] = useState(true);
-  // const { getTokensAndCredentials } = useAuth();
+  const { getAWSCredsFromIdToken } = useAuth();
 
   // Load user from Chrome Storage on mount
   useEffect(() => {
@@ -46,16 +46,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
         // Expired, get new credentials
         if (!validCreds) {
-          // const tokensAndCreds = await getTokensAndCredentials();
-          // if (!tokensAndCreds) throw new Error("Failed to refresh credentials");
-
-          // storedUser.awsCredentials = {
-          //   ...tokensAndCreds.awsCredentials,
-          // };
-
-          // await setChromeStorage("user", storedUser);
-
-          return;
+          if (storedUser?.idToken) {
+            const newCreds = await getAWSCredsFromIdToken(storedUser.idToken); // Get new creds if existing idToken
+            storedUser.awsCredentials = newCreds;
+            await setChromeStorage("user", storedUser);
+          } else {
+            // fallback: re-prompt login
+            setUser(null);
+            return;
+          }
         }
 
         // Update resume URL

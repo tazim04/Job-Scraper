@@ -14,6 +14,7 @@ export const useAuth = () => {
   const getTokensAndCreds = async (): Promise<{
     awsCredentials: AWSCredentials;
     accessToken: string;
+    idToken: string;
   }> => {
     return new Promise((resolve, reject) => {
       if (!chrome?.identity || !chrome.identity.launchWebAuthFlow) {
@@ -83,14 +84,44 @@ export const useAuth = () => {
             resolve({
               awsCredentials: awsCredentials,
               accessToken: accessToken,
+              idToken: idToken,
             });
-          } catch (err) {
-            reject("Failed to retrieve AWS credentials: " + err);
+          } catch (error) {
+            reject("Failed to retrieve AWS credentials: " + error);
           }
         }
       );
     });
   };
+  const getAWSCredsFromIdToken = async (
+    idToken: string
+  ): Promise<AWSCredentials> => {
+    const identityClient = new CognitoIdentityClient({ region: REGION });
 
-  return { getTokensAndCreds };
+    const credentialsProvider: CognitoIdentityCredentialProvider = fromCognitoIdentityPool(
+      {
+        client: identityClient,
+        identityPoolId: IDENTITY_POOL_ID,
+        logins: {
+          "accounts.google.com": idToken,
+        },
+      }
+    );
+
+    try {
+      const tempCreds = await credentialsProvider();
+
+      const awsCredentials: AWSCredentials = {
+        accessKeyId: tempCreds.accessKeyId!,
+        secretAccessKey: tempCreds.secretAccessKey!,
+        sessionToken: tempCreds.sessionToken!,
+        expiresAt: tempCreds.expiration!.getTime(),
+      };
+
+      return awsCredentials;
+    } catch (error) {
+      throw new Error("Failed to get AWS Creds from ID Token: " + error);
+    }
+  };
+  return { getTokensAndCreds, getAWSCredsFromIdToken };
 };

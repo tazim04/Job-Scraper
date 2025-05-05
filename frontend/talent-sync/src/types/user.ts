@@ -5,7 +5,9 @@ export type User = {
   email: string;
   picture: string;
   resumeUrl?: string; // URL to uploaded resume (S3)
-  awsCredentials?: AWSCredentials;
+  awsCredentials: AWSCredentials; // required to make trigger Lambda functions
+  idToken?: string;
+  accessToken?: string;
 } | null; // user can start as null
 
 export default User;

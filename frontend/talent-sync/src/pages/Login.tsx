@@ -4,7 +4,6 @@ import { useUser } from "../context/userContext";
 import { Loader2, LogIn } from "lucide-react";
 import { logError, logInfo } from "../utils/logger";
 
-// Import Chrome Storage utils
 import User from "../types/user";
 import { getResumeUrl } from "../api/resume";
 
@@ -17,7 +16,11 @@ const Login = () => {
     logInfo("[Login] Login button pressed!");
     try {
       setLoading(true);
-      const { awsCredentials, accessToken } = await getTokensAndCreds();
+      const {
+        awsCredentials,
+        accessToken,
+        idToken,
+      } = await getTokensAndCreds();
       if (!accessToken) {
         logInfo("[Login] No accessToken received!");
         return;
@@ -48,6 +51,8 @@ const Login = () => {
         picture: userInfo.picture,
         resumeUrl: resumeUrl || undefined,
         awsCredentials: awsCredentials,
+        idToken: idToken,
+        accessToken: accessToken,
       };
 
       setUser(user);
