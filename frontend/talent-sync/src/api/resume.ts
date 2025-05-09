@@ -8,61 +8,67 @@ const REGION = import.meta.env.VITE_AWS_REGION;
 // Upload resume file
 export const uploadResume = async (
   file: File,
-  email: string
-): Promise<string | null> => {
+  email: string,
+  awsCredentials: AWSCredentials
+): Promise<boolean> => {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("email", email);
 
   try {
-    logInfo("Sending resume to Flask API...", { fileName: file.name, email });
+    logInfo("Sending resume to Lambda API...", { fileName: file.name, email });
 
-    // Get signed URL from Lambda
-    const signedUrlRes = await axios.post(
-      "https://duzydv33oa.execute-api.ca-central-1.amazonaws.com/default/talentSyncDownload",
-      { email }
-    );
+    const lambda = new LambdaClient({
+      region: REGION,
+      credentials: awsCredentials,
+    });
 
-    const signedUrl = signedUrlRes.data.uploadUrl;
+    const payload = { email };
 
-    logInfo("Signed URL received, uploading to S3...", signedUrl);
+    const command = new InvokeCommand({
+      FunctionName: "talentSyncUpload",
+      Payload: new TextEncoder().encode(JSON.stringify(payload)),
+    });
+
+    const response = await lambda.send(command);
+
+    // Decode payload buffer
+    const decodePayload = new TextDecoder("utf-8").decode(response.Payload);
+    const outerJson = JSON.parse(decodePayload);
+
+    // Parse the inner body if it exists
+    const parsed = outerJson.body ? JSON.parse(outerJson.body) : {};
+
+    const uploadUrl = parsed.uploadUrl;
+
+    if (!uploadUrl) {
+      logError("[uploadResume] No signed upload URL received from Lambda.");
+      return false;
+    }
+
+    logInfo("Signed URL received, uploading to S3...", uploadUrl);
 
     // Upload file directly to S3 bucket using the URL
-    await axios.put(signedUrl, file, {
+    await axios.put(uploadUrl, file, {
       headers: {
-        "Content-Type": file.type || "application/pdf", // Properly set the content type
+        "Content-Type": file.type || "application/pdf",
       },
     });
 
     logInfo("Resume uploaded directly to S3!");
 
-    // Return public location
-    const publicUrl = signedUrl.split("?")[0]; // Remove query params
-    return publicUrl;
-
-    // const response = await axios.post(
-    //   "http://127.0.0.1:5001/api/upload_resume",
-    //   formData,
-    //   {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data", // Required for file uploads
-    //     },
-    //   }
-    // );
-
-    // logInfo("Resume uploaded successfully!", response.data);
-    // return response.data.resume_url;
+    return true;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      logError("Axios error:", {
+      logError("[uploadResume] Axios error during S3 upload:", {
         message: error.message,
-        response: error.response?.data || "No response data",
-        status: error.response?.status || "No status",
+        status: error.response?.status,
+        response: error.response?.data,
       });
     } else {
-      logError("Unexpected error:", error);
+      logError("[uploadResume] Lambda or general error:", error);
     }
-    return null;
+    return false;
   }
 };
 
@@ -70,26 +76,31 @@ export const getResumeUrl = async (
   email: string,
   awsCredentials: AWSCredentials
 ): Promise<string | null> => {
-  const lambda = new LambdaClient({
-    region: REGION,
-    credentials: awsCredentials,
-  });
+  try {
+    const lambda = new LambdaClient({
+      region: REGION,
+      credentials: awsCredentials,
+    });
 
-  const payload = { email };
+    const payload = { email };
 
-  const command = new InvokeCommand({
-    FunctionName: "talentSyncDownload",
-    Payload: new TextEncoder().encode(JSON.stringify(payload)), // Must encode
-  });
+    const command = new InvokeCommand({
+      FunctionName: "talentSyncDownload",
+      Payload: new TextEncoder().encode(JSON.stringify(payload)), // Must encode
+    });
 
-  const response = await lambda.send(command);
+    const response = await lambda.send(command);
 
-  // Decode payload buffer
-  const decodedPayload = new TextDecoder("utf-8").decode(response.Payload);
-  const outerJson = JSON.parse(decodedPayload);
+    // Decode payload buffer
+    const decodedPayload = new TextDecoder("utf-8").decode(response.Payload);
+    const outerJson = JSON.parse(decodedPayload);
 
-  // Parse the inner body if it exists
-  const parsed = outerJson.body ? JSON.parse(outerJson.body) : {};
+    // Parse the inner body if it exists
+    const parsed = outerJson.body ? JSON.parse(outerJson.body) : {};
 
-  return parsed.resumeUrl || null;
+    return parsed.resumeUrl || null;
+  } catch (error) {
+    logError("[getResumeUrl] Error:", error);
+    return null;
+  }
 };

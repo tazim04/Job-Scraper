@@ -23,7 +23,11 @@ const JobScanner = () => {
       }
 
       try {
-        const analysisResult = await fetchAnalysis(user.resumeUrl, currentUrl);
+        const analysisResult = await fetchAnalysis(
+          user.resumeUrl,
+          currentUrl,
+          user.awsCredentials
+        );
         navigate("dashboard", "results", analysisResult);
       } catch (error) {
         console.error("Error fetching analysis:", error);

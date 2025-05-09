@@ -2,14 +2,23 @@ import json
 import re
 import os
 from urllib.parse import urlparse, parse_qs
-from analyzer_lambda.linkedin_scraper import JobScraperLinkedIn
-from analyzer_lambda.comparer import Comparer
+from linkedin_scraper import JobScraperLinkedIn
+from comparer import Comparer
 
 comparer = Comparer()
 
 def lambda_handler(event, context):
     try:
-        body = json.loads(event["body"])
+        # body = json.loads(event["body"])
+        # resume_path = body.get("resume_path")
+        # original_link = body.get("link")
+        
+                # Handle both stringified JSON and raw dict
+        if isinstance(event.get("body"), str):
+            body = json.loads(event["body"])
+        else:
+            body = event.get("body", event)  # fallback to event if no 'body'
+            
         resume_path = body.get("resume_path")
         original_link = body.get("link")
 

@@ -1,6 +1,6 @@
 import asyncio
 from playwright.async_api import async_playwright
-from .models import Job
+from models import Job
 
 class JobScraperLinkedIn:
     def __init__(self):

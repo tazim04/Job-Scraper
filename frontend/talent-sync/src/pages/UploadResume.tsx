@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "../hooks/useNavigate";
-import { uploadResume } from "../api/resume";
+import { getResumeUrl, uploadResume } from "../api/resume";
 import FileUploader from "../components/FileUploader";
 import { useUser } from "../context/userContext";
 import { logInfo, logError, logWarn } from "../utils/logger";
@@ -22,15 +22,19 @@ const UploadResume = () => {
 
     try {
       // Call the API to upload the resume
-      const resumeUrl = await uploadResume(file, user.email);
+      const success = await uploadResume(file, user.email, user.awsCredentials);
 
-      logInfo("resumeUrl", { resumeUrl });
+      if (success) {
+        logInfo("Upload successful!");
 
-      if (resumeUrl) {
-        logInfo("Upload successful!", { resumeUrl });
+        // get fresh signed resume url
+        const signedResumeUrl = await getResumeUrl(
+          user.email,
+          user.awsCredentials
+        );
 
         // Update user context with the resume URL
-        setUser({ ...user, resumeUrl });
+        setUser({ ...user, resumeUrl: signedResumeUrl });
 
         // Navigate to the scanner page
         navigate("dashboard", "scanner");
