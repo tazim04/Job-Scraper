@@ -12,16 +12,42 @@ class JobScraperLinkedIn:
 
     async def init_browser(self):
         try:
+            print("Starting playwright...")
             self.playwright = await async_playwright().start()
+            print("Launching chromium...")
             self.browser = await self.playwright.chromium.launch(
                 headless=True,
-                args=['--disable-dev-shm-usage']
+                args = [
+                    "--disable-gpu",
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-setuid-sandbox",
+                    "--no-zygote",
+                    "--disable-accelerated-2d-canvas",
+                    "--disable-background-networking",
+                    "--disable-renderer-backgrounding",
+                    "--disable-sync",
+                    "--metrics-recording-only",
+                    "--mute-audio",
+                    "--no-first-run",
+                    "--disable-popup-blocking",
+                    "--disable-default-apps",
+                    "--disable-features=AudioServiceOutOfProcess",
+                    "--hide-scrollbars",
+                    "--autoplay-policy=user-gesture-required",
+                    "--use-gl=swiftshader",
+                    "--single-process",
+                    "--disable-extensions"
+                ]
             )
+            print("Creating new context...")
             self.context = await self.browser.new_context(
                 viewport={'width': 1920, 'height': 1080},
                 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
             )
+            print("Opening new page...")
             self.page = await self.context.new_page()
+            print("Browser ready!")
         except Exception as e:
             print(f"Browser initialization failed: {e}")
             await self.cleanup()

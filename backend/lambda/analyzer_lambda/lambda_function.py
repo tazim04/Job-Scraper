@@ -44,6 +44,10 @@ def lambda_handler(event, context):
         # Scrape job data from guest URL
         scraper = JobScraperLinkedIn()
         job = scraper.scrape_job(guest_url)
+        
+        if not job or not getattr(job, "description", None):
+            return response(400, {"error": "Failed to scrape job description from LinkedIn"})
+
 
         # Comparison analysis
         groq_res = comparer.compare(resume_path, job.description)
