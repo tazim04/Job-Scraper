@@ -24,13 +24,15 @@ export const fetchAnalysis = async (
 
     const command = new InvokeCommand({
       FunctionName: "talentSyncAnalyzer",
-      Payload: new TextEncoder().encode(JSON.stringify(payload)),
+      Payload: JSON.stringify(payload),
     });
 
     const response = await lambda.send(command);
 
     // Decode payload buffer
     const decodePayload = new TextDecoder("utf-8").decode(response.Payload);
+    logInfo("RAW Lambda Payload:", decodePayload);
+
     const outerJson = JSON.parse(decodePayload);
 
     // Status code handling from Python lambda response

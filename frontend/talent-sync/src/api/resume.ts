@@ -27,7 +27,7 @@ export const uploadResume = async (
 
     const command = new InvokeCommand({
       FunctionName: "talentSyncUpload",
-      Payload: new TextEncoder().encode(JSON.stringify(payload)),
+      Payload: JSON.stringify(payload),
     });
 
     const response = await lambda.send(command);
@@ -86,7 +86,7 @@ export const getResumeUrl = async (
 
     const command = new InvokeCommand({
       FunctionName: "talentSyncDownload",
-      Payload: new TextEncoder().encode(JSON.stringify(payload)), // Must encode
+      Payload: JSON.stringify(payload),
     });
 
     const response = await lambda.send(command);
