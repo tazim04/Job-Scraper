@@ -5,6 +5,16 @@ import { AWSCredentials } from "../types/AWSCredentials";
 
 const REGION = import.meta.env.VITE_AWS_REGION;
 
+// Update existing resume, just reuses existing logic
+export const updateResume = async (
+  file: File,
+  email: string,
+  awsCredentials: AWSCredentials
+): Promise<boolean> => {
+  logInfo("Updating resume for ", email);
+  return uploadResume(file, email, awsCredentials);
+};
+
 // Upload resume file
 export const uploadResume = async (
   file: File,

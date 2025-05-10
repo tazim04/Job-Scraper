@@ -35,7 +35,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ setFile }) => {
     <div className="flex items-center justify-center w-full">
       <label
         htmlFor="dropzone-file"
-        className={`flex flex-col items-center justify-center w-full h-32 border-2 ${
+        className={`flex flex-col items-center justify-center w-full h-28 border-2 ${
           isDragging
             ? "border-emerald-500 bg-blue-100"
             : "border-gray-300 bg-gray-50"

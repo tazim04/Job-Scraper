@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { ReactNode } from "react";
 import { useNavigate } from "../hooks/useNavigate";
+import NavigateOptions from "../types/navigation/NavigateOptions";
 
 // Reusable Section Component
 interface SectionProps {
@@ -32,6 +33,14 @@ const Section = ({ title, icon, children }: SectionProps) => (
 // Main Results Component
 const Results = () => {
   const { resultsData, clearResults, navigate } = useNavigate();
+  const backPayload: NavigateOptions = {
+    page: "dashboard",
+    subPage: "scanner",
+  };
+  const handleBack = () => {
+    clearResults(); // Clear results data
+    navigate(backPayload); // Navigate back to scanner
+  };
 
   if (resultsData?.error) {
     return (
@@ -42,7 +51,7 @@ const Results = () => {
         <p className="text-gray-700 mt-2 text-base">{resultsData.reason}</p>
         <p className="mt-4">{resultsData.error}</p>
         <button
-          onClick={() => navigate("dashboard", "scanner")}
+          onClick={handleBack}
           className="bg-indigo-500 text-white px-4 py-2 rounded mt-4 transition-colors ease-in-out hover:bg-indigo-400"
         >
           Back to Scanner
@@ -54,11 +63,6 @@ const Results = () => {
   if (!resultsData) {
     return <div>No results data available.</div>;
   }
-
-  const handleBack = () => {
-    clearResults(); // Clear results data
-    navigate("dashboard", "scanner"); // Navigate back to scanner
-  };
 
   return (
     <div className="h-[25.5rem] overflow-y-auto px-1 py-3 bg-white">

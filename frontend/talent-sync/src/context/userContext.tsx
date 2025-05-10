@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import User from "../types/user";
+import User from "../types/User";
 import { getChromeStorage, setChromeStorage } from "../utils/chromeStorage";
 import { getResumeUrl } from "../api/resume";
 import { AWSCredentials } from "../types/AWSCredentials";

@@ -4,7 +4,7 @@ import { useUser } from "../context/userContext";
 import { Loader2, LogIn } from "lucide-react";
 import { logError, logInfo } from "../utils/logger";
 
-import User from "../types/user";
+import User from "../types/User";
 import { getResumeUrl } from "../api/resume";
 
 const Login = () => {

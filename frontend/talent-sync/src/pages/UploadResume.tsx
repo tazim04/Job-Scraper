@@ -4,11 +4,12 @@ import { getResumeUrl, uploadResume } from "../api/resume";
 import FileUploader from "../components/FileUploader";
 import { useUser } from "../context/userContext";
 import { logInfo, logError, logWarn } from "../utils/logger";
+import NavigateOptions from "../types/navigation/NavigateOptions";
 
 const UploadResume = () => {
   const [file, setFile] = useState<File | null>(null);
   const { user, setUser } = useUser();
-  const { navigate } = useNavigate();
+  const { navigate, updateMode } = useNavigate();
   const [uploading, setUploading] = useState(false);
 
   const handleUpload = async () => {
@@ -37,7 +38,11 @@ const UploadResume = () => {
         setUser({ ...user, resumeUrl: signedResumeUrl });
 
         // Navigate to the scanner page
-        navigate("dashboard", "scanner");
+        const payload: NavigateOptions = {
+          page: "dashboard",
+          subPage: "scanner",
+        };
+        navigate(payload);
       } else {
         logError("Upload failed: No resume URL received.");
       }
@@ -48,8 +53,24 @@ const UploadResume = () => {
     }
   };
 
+  const handleBack = () => {
+    const payload: NavigateOptions = {
+      page: "dashboard",
+      subPage: "scanner",
+    };
+    navigate(payload);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center h-[50vh] text-center">
+    <div className="flex flex-col items-center justify-center h-[50vh] text-center mb-5">
+      {updateMode && (
+        <button
+          onClick={handleBack}
+          className="bg-indigo-500 text-white px-4 py-2 rounded my-4 transition-colors ease-in-out hover:bg-indigo-400"
+        >
+          Back to Scanner
+        </button>
+      )}
       <h1 className="text-base mb-2">Upload Your Resume</h1>
       <FileUploader setFile={setFile} />
 

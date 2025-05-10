@@ -6,19 +6,18 @@ import {
   useEffect,
 } from "react";
 import { useUser } from "../context/userContext";
-import JobResult from "../types/JobResult";
 import { logInfo } from "../utils/logger";
-
-// Define possible pages & sub-pages
-type Page = "login" | "dashboard";
-type SubPage = "upload" | "scanner" | "results" | null; // Only if logged in
+import NavigateOptions from "../types/navigation/NavigateOptions";
+import { Page, SubPage } from "../types/navigation/Page";
+import JobResult from "../types/JobResult";
 
 // Define context type
 type NavigateContextType = {
   currentPage: Page;
   subPage: SubPage;
   resultsData: JobResult | null;
-  navigate: (page: Page, subPage?: SubPage, data?: JobResult) => void;
+  updateMode: boolean;
+  navigate: (options: NavigateOptions) => void;
   clearResults: () => void;
 };
 
@@ -31,7 +30,8 @@ const NavigateContext = createContext<NavigateContextType | undefined>(
 export const NavigateProvider = ({ children }: { children: ReactNode }) => {
   const [currentPage, setCurrentPage] = useState<Page>("login");
   const [subPage, setSubPage] = useState<SubPage>(null);
-  const [resultsData, setResultsData] = useState<JobResult | null>(null); // Add state for results data
+  const [updateMode, setUpdateMode] = useState(false);
+  const [resultsData, setResultsData] = useState<JobResult | null>(null);
   const { user } = useUser();
 
   // Set subPage based on user's resume availability when they log in
@@ -47,11 +47,13 @@ export const NavigateProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user]);
 
-  const navigate = (page: Page, sub?: SubPage, data?: JobResult) => {
+  // update is to optionally render a back button for the upload page if the user is UPDATING their resume, not uploading a brand new one upon account creation
+  const navigate = ({ page, subPage, data, update }: NavigateOptions) => {
     setCurrentPage(page);
-    setSubPage(sub ?? null);
-    if (sub === "results") {
-      setResultsData(data || null); // Store results data when navigating to results page
+    setSubPage(subPage ?? null);
+    setUpdateMode(!!update);
+    if (subPage === "results") {
+      setResultsData(data || null);
     }
   };
 
@@ -61,7 +63,14 @@ export const NavigateProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <NavigateContext.Provider
-      value={{ currentPage, subPage, resultsData, navigate, clearResults }}
+      value={{
+        currentPage,
+        subPage,
+        updateMode,
+        resultsData,
+        navigate,
+        clearResults,
+      }}
     >
       {children}
     </NavigateContext.Provider>
