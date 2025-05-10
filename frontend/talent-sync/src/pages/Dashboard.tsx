@@ -5,7 +5,7 @@ const Dashboard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <div className="p-5">
       <Greeting />
 
-      {/* Either Job Scanner or Resume Upload */}
+      {/* Either Job Scanner, Resume Upload or Results */}
       <div className="mt-2">{children}</div>
     </div>
   );

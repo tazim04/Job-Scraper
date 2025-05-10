@@ -15,6 +15,20 @@ export const fetchAnalysis = async (
       link,
     });
 
+    // Validate LinkedIn job link
+    const isLinkedInJobUrl =
+      typeof link === "string" &&
+      link.includes("linkedin.com/jobs") &&
+      (link.includes("currentJobId=") || /\/jobs\/view\/\d+/.test(link));
+
+    if (!isLinkedInJobUrl) {
+      logError("Invalid LinkedIn job link detected.", link);
+      return {
+        error: "Invalid Job Link",
+        reason: "Please provide a valid LinkedIn job posting.",
+      };
+    }
+
     const lambda = new LambdaClient({
       region: REGION,
       credentials: awsCredentials,
@@ -40,10 +54,28 @@ export const fetchAnalysis = async (
     const parsedAnalysis = outerJson.body ? JSON.parse(outerJson.body) : {};
 
     if (statusCode !== 200) {
+      const rawError = parsedAnalysis.error;
+
+      let friendlyMessage =
+        rawError || "An unknown error occurred during analysis.";
+
+      // Detect and extract wait time from Groq rate limit error
+      const isRateLimitError =
+        typeof rawError === "string" &&
+        rawError.includes("rate_limit_exceeded") &&
+        rawError.includes("tokens per day");
+
+      if (isRateLimitError) {
+        const waitTimeMatch = rawError.match(/try again in (\d+m\d+\.\d+s)/i);
+        const waitTime = waitTimeMatch
+          ? waitTimeMatch[1].replace(/\.?\d*s/, "s")
+          : "a while";
+        friendlyMessage = `We've reached our current AI usage limit. Please try again in ${waitTime}.`;
+      }
+
       return {
         error: "Analysis Failed",
-        reason:
-          parsedAnalysis.error || "An unknown error occurred during analysis.",
+        reason: friendlyMessage,
       };
     }
 
@@ -57,67 +89,3 @@ export const fetchAnalysis = async (
     };
   }
 };
-
-// export const fetchAnalysis = async (
-//   resume_path: string,
-//   link: string
-// ): Promise<any | null> => {
-//   try {
-//     logInfo("Sending resume path to backend API for analysis...", {
-//       resume_path,
-//       link,
-//     });
-
-//     const response = await axios.post(
-//       "http://127.0.0.1:5001/api/compare",
-//       {
-//         resume_path,
-//         link,
-//       },
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-
-//     logInfo("Analysis received successfully!", response.data);
-//     return response.data;
-//   } catch (error) {
-//     if (axios.isAxiosError(error)) {
-//       logInfo("Axios error caught.");
-
-//       const errorMessage = error.response?.data?.error ?? "";
-
-//       const limitExceeded =
-//         typeof errorMessage === "string" &&
-//         errorMessage.includes("Error code: 429");
-
-//       if (limitExceeded) {
-//         const retryMatch = errorMessage.match(
-//           /Please try again in (\d+)m(\d+\.\d+)s/
-//         );
-//         const retryMinutes = retryMatch ? parseInt(retryMatch[1], 10) : 0;
-//         const retrySeconds = retryMatch ? parseFloat(retryMatch[2]) : 0;
-
-//         return {
-//           error: "Rate Limit Exceeded",
-//           reason: `TalentSync has temporarily reached its processing limit. Please try again in ${retryMinutes}m ${Math.round(
-//             retrySeconds
-//           )}s.`,
-//         };
-//       }
-
-//       return {
-//         error: "Analysis Failed",
-//         reason: errorMessage || "An unknown error occurred.",
-//       };
-//     }
-
-//     logError("Unexpected non-Axios error:", error);
-//     return {
-//       error: "Unexpected Error",
-//       reason: "Something went wrong. Please try again later.",
-//     };
-//   }
-// };

@@ -82,7 +82,7 @@ class Comparer:
 
             OUTPUT JSON STRUCTURE:
             {{
-            "summary": "Clear, concise overview of the position and company focus. Maximum 2-3 sentences.",
+            "summary": "Clear, concise, short overview of the position. Maximum 2-3 sentences.",
             "key_technologies": [
                 "Technology names with correct capitalization",
                 "ALL_CAPS for acronyms only",

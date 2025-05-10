@@ -44,12 +44,24 @@ const JobScanner = () => {
     });
   };
 
-  const handleViewResume = () => {
+  const handleViewResume = async () => {
     if (!user?.resumeUrl) {
       console.error("No resume URL found!");
       return;
     }
-    window.open(user.resumeUrl, "_blank");
+
+    try {
+      const response = await fetch(user.resumeUrl);
+      if (!response.ok) {
+        throw new Error("Failed to fetch resume");
+      }
+
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, "_blank");
+    } catch (error) {
+      console.error("Error opening resume:", error);
+    }
   };
 
   const handleUpdateResume = () => {

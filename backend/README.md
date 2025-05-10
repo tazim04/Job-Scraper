@@ -1,28 +1,30 @@
-# LinkedIn Job Scraper Backend
+# TalentSync Backend
 
-## Development Setup
+## Overview
 
-### Option 1: Using Docker (Recommended)
+This backend is fully **serverless**, built using **AWS Lambda** functions that are secured using **AWS Cognito with Google OAuth authentication**.
 
-1. Install Docker and Docker Compose on your machine:
+It accepts a resume (presigned S3 url) and a LinkedIn job posting link, scrapes the job description, analyzes it using Groq API, and returns a compatibility report based on the match between the resume and job requirements.
 
-   - [Docker Desktop for Mac/Windows](https://www.docker.com/products/docker-desktop)
-   - [Docker Engine for Linux](https://docs.docker.com/engine/install/)
+---
 
-2. Clone the repository and navigate to the backend folder:
-   - Ensure you have Python 3.6 or higher installed. [Download Python here](https://www.python.org/downloads/).
-   - Navigate to the `backend` folder using `cd backend`.
-   - Create a virtual environment with `python3 -m venv venv`.
-   - Activate the virtual environment using `source venv/bin/activate` on Mac/Linux or `venv\Scripts\activate` on Windows.
-   - Build the Docker container using `docker-compose build`.
-   - Run the Applications using `docker-compose up`.
+## Authentication
 
-# Save dependencies to requirements.txt
+All API access is secured via:
 
-`pip freeze > requirements.txt`
+- **AWS Cognito Identity Pools**
+- **Google OAuth 2.0**
 
-# Rebuild Docker container when requirements change
+Users authenticate via Google, and their identity is federated through Cognito to retrieve **temporary AWS credentials**. These credentials are then used to **invoke the API Gateway endpoints** that trigger the Lambda function securely.
 
-If you've updated the requirements.txt file, rebuild the Docker container:
+---
 
-`docker-compose build --no-cache`
+## Architecture
+
+- **AWS Lambda** – Executes scraping, S3 file access, and resume-job comparison
+- **AWS API Gateway** – Public-facing endpoint secured by Cognito-authorized IAM calls
+- **AWS S3** – Secure storage for uploaded resumes
+- **AWS Cognito + Google OAuth** – Handles user authentication and authorization
+- **Docker + AWS ECR** – Custom Docker image (with Playwright and dependencies) is built locally and pushed to **Amazon ECR**, which is used as the Lambda deployment source
+- **Playwright** – Headless browser for scraping LinkedIn job data
+- **Groq API** – AI-powered resume analysis (llama-3.3)

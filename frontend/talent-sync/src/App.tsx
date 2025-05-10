@@ -27,7 +27,7 @@ const MainApp: React.FC = () => {
   const { currentPage, subPage } = useNavigate();
 
   return (
-    <div className="w-[24rem] h-[26rem] font-sans">
+    <div className="w-[24rem] min-h-[26rem] max-h-[100vh] font-sans flex flex-col">
       <Header />
 
       {loading ? (

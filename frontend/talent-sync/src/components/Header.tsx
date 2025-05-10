@@ -1,5 +1,6 @@
 import { useUser } from "../context/userContext";
 import { useNavigate } from "../hooks/useNavigate";
+import NavigateOptions from "../types/navigation/NavigateOptions";
 
 const Header = () => {
   const { user, setUser } = useUser();
@@ -19,7 +20,8 @@ const Header = () => {
     }
 
     setUser(null);
-    navigate("login");
+    const payload: NavigateOptions = { page: "login" };
+    navigate(payload);
   };
 
   return (

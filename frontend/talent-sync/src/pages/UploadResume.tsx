@@ -62,7 +62,7 @@ const UploadResume = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-[50vh] text-center mb-5">
+    <div className="flex flex-col items-center justify-center h-[54vh] text-center mb-5">
       {updateMode && (
         <button
           onClick={handleBack}

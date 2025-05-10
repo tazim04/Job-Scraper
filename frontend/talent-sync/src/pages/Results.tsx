@@ -45,8 +45,8 @@ const Results = () => {
   if (resultsData?.error) {
     return (
       <div className="flex flex-col items-center justify-center text-center p-2">
-        <h2 className="text-xl font-semibold text-indigo-600">
-          It's not you, it's us. :(
+        <h2 className="text-xl font-semibold text-red-600">
+          WOAH! Something went wrong!
         </h2>
         <p className="text-gray-700 mt-2 text-base">{resultsData.reason}</p>
         <p className="mt-4">{resultsData.error}</p>
@@ -65,7 +65,7 @@ const Results = () => {
   }
 
   return (
-    <div className="h-[25.5rem] overflow-y-auto px-1 py-3 bg-white">
+    <div className="px-1 py-3 bg-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
@@ -91,6 +91,18 @@ const Results = () => {
             {resultsData.company}
           </p>
         </div>
+
+        {/* Summary Section (Brief Overview) */}
+        {resultsData.summary && (
+          <div className="mb-6">
+            <h3 className="text-md font-medium text-gray-800 text-center mb-2">
+              Summary
+            </h3>
+            <p className="text-gray-600 text-sm leading-relaxed text-center px-4">
+              {resultsData.summary}
+            </p>
+          </div>
+        )}
 
         {/* Score Section (Central Focus) */}
         <div className="flex flex-col items-center justify-center">
