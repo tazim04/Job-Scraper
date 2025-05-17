@@ -1,6 +1,7 @@
 import {
   Star,
   ClipboardList,
+  Clipboard,
   Briefcase,
   MapPin,
   Clock,
@@ -65,7 +66,7 @@ const Results = () => {
   }
 
   return (
-    <div className="px-1 py-3 bg-white">
+    <div className="py-3 bg-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
@@ -82,7 +83,7 @@ const Results = () => {
       </div>
 
       {/* Job Title and Company */}
-      <div className="bg-indigo-50 p-6 rounded-lg mb-6">
+      <div className="bg-indigo-50 p-6 rounded-lg mb-3">
         <div className="mb-3">
           <h1 className="text-lg font-bold text-gray-900 text-center mb-2">
             {resultsData.title}
@@ -91,18 +92,6 @@ const Results = () => {
             {resultsData.company}
           </p>
         </div>
-
-        {/* Summary Section (Brief Overview) */}
-        {resultsData.summary && (
-          <div className="mb-6">
-            <h3 className="text-md font-medium text-gray-800 text-center mb-2">
-              Summary
-            </h3>
-            <p className="text-gray-600 text-sm leading-relaxed text-center px-4">
-              {resultsData.summary}
-            </p>
-          </div>
-        )}
 
         {/* Score Section (Central Focus) */}
         <div className="flex flex-col items-center justify-center">
@@ -128,6 +117,21 @@ const Results = () => {
             Your resume matches {resultsData.score}% of the job requirements.
           </p>
         </div>
+      </div>
+
+      {/* Summary Section (Brief Overview) */}
+      <div className="bg-indigo-50 p-6 rounded-lg mb-6">
+        {resultsData.summary && (
+          <div className="mb-6">
+            <h3 className="text-lg font-medium text-gray-800 text-center mb-2">
+              <Clipboard size={20} />
+              Summary
+            </h3>
+            <p className="text-gray-600 text-sm leading-relaxed px-2">
+              {resultsData.summary}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Job Details */}
@@ -202,7 +206,7 @@ const Results = () => {
           </Section>
 
           <Section title="Recommendations" icon={<Star size={18} />}>
-            <ul className="list-disc list-outside space-y-2 pl-2">
+            <ul className="list-disc list-outside space-y-2 pl-5">
               {resultsData.recommendations?.map((rec, index) => (
                 <li key={index} className="text-sm text-gray-700">
                   {rec}

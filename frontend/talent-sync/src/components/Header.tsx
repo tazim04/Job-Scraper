@@ -27,7 +27,7 @@ const Header = () => {
   return (
     <div className="px-5 py-3 flex items-center justify-between">
       {/* Left Side: Logo and Title */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center">
         <img src="./icon.png" alt="logo" className="w-7" />
         <h3 className="text-xl font-semibold">
           <span>Talent</span>

@@ -4,6 +4,7 @@ import { getChromeStorage, setChromeStorage } from "../utils/chromeStorage";
 import { getResumeUrl } from "../api/resume";
 import { AWSCredentials } from "../types/AWSCredentials";
 import { useAuth } from "../hooks/useAuth";
+import { logInfo } from "../utils/logger";
 
 // Define Context Type
 type UserContextType = {
@@ -40,6 +41,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const initUser = async () => {
       try {
         const storedUser = await getChromeStorage("user");
+
+        logInfo("[userContext] storedUser =", storedUser);
 
         // Check if AWS credentials are still valid
         const validCreds = isAWSCredentialsValid(storedUser?.awsCredentials);
