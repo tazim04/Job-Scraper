@@ -67,6 +67,8 @@ class Comparer:
                 - Verify if job level (internship/entry/senior) matches user's experience
                 - For students, prioritize internships and co-op positions
                 - Flag mismatches between career stage and job requirements
+                - Determine if each listed soft skill/methodology is mentioned or implied in the resume
+                - Determine if each listed technology is explicitly mentioned or clearly implied in the resume
 
             TECHNOLOGY NAMING CONVENTIONS:
             - Use ALL CAPS only for true acronyms (HTML, CSS, AWS, SQL)
@@ -84,14 +86,16 @@ class Comparer:
             {{
             "summary": "Clear, concise, short overview of the position. Maximum 2-3 sentences.",
             "key_technologies": [
-                "Technology names with correct capitalization",
-                "ALL_CAPS for acronyms only",
-                "Regular caps for named technologies"
+            {
+                "technology": "Technology name with correct capitalization",
+                "has_technology": true or false, true if technology appears in the user's resume
+            }
             ],
             "key_skills": [
-                "First letter capitalized",
-                "Focus on non-technical requirements",
-                "Include methodologies and practices"
+            {
+                "skill": "First letter capitalized, non-technical skill from job description",
+                "has_skill": true or false, true if candidate’s resume shows evidence of this skill
+            }
             ],
             "location_type": "Remote/Hybrid/On-site",
             "job_type": "Full-time/Part-time/Contract/Internship",
