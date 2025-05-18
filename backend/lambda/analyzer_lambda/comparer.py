@@ -67,8 +67,6 @@ class Comparer:
                 - Verify if job level (internship/entry/senior) matches user's experience
                 - For students, prioritize internships and co-op positions
                 - Flag mismatches between career stage and job requirements
-                - Determine if each listed soft skill/methodology is mentioned or implied in the resume
-                - Determine if each listed technology is explicitly mentioned or clearly implied in the resume
 
             TECHNOLOGY NAMING CONVENTIONS:
             - Use ALL CAPS only for true acronyms (HTML, CSS, AWS, SQL)
@@ -86,27 +84,22 @@ class Comparer:
             {{
             "summary": "Clear, concise, short overview of the position. Maximum 2-3 sentences.",
             "key_technologies": [
-            {
+                {{
                 "technology": "Technology name with correct capitalization",
-                "has_technology": true or false, true if technology appears in the user's resume
-            }
+                "has_technology": true
+                }}
             ],
             "key_skills": [
-            {
+                {{
                 "skill": "First letter capitalized, non-technical skill from job description",
-                "has_skill": true or false, true if candidate’s resume shows evidence of this skill
-            }
+                "has_skill": true
+                }}
             ],
             "location_type": "Remote/Hybrid/On-site",
             "job_type": "Full-time/Part-time/Contract/Internship",
             "salary": "Exact amount or range if specified, otherwise 'Not Specified'",
-            "matching_analysis": "Detailed analysis focusing on:
-                1. Technical skill alignment
-                2. Experience level match
-                3. Education requirement fit
-                4. Any significant gaps
-                Maximum 4-5 sentences.",
-            "score": "0-100 numerical value considering ALL requirements",
+            "matching_analysis": "Detailed analysis focusing on:\\n1. Technical skill alignment\\n2. Experience level match\\n3. Education requirement fit\\n4. Any significant gaps\\nMaximum 4-5 sentences.",
+            "score": "0 to 100 numerical value considering ALL requirements",
             "recommendations": [
                 "If technical role: Suggest specific portfolio projects",
                 "If education gap: List exact certification/degree needed",
@@ -114,6 +107,7 @@ class Comparer:
                 "Maximum 5 recommendations"
             ]
             }}
+
 
             ANALYSIS INSTRUCTIONS:
             1. Review job description for:
@@ -128,6 +122,8 @@ class Comparer:
             - Experience level match
             - Education fit
             - Potential gaps
+            - Determine if each listed soft skill/methodology is mentioned or implied in the resume
+            - Determine if each listed technology is explicitly mentioned or clearly implied in the resume
 
             JOB DESCRIPTION:
             {job_desc}
