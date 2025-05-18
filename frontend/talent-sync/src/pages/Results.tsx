@@ -120,10 +120,10 @@ const Results = () => {
       </div>
 
       {/* Summary Section (Brief Overview) */}
-      <div className="bg-indigo-50 p-6 rounded-lg mb-6">
+      <div className="bg-indigo-50 px-6 pb-3 pt-4 rounded-lg mb-6">
         {resultsData.summary && (
-          <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-800 text-center mb-2">
+          <div className="mb-3">
+            <h3 className="text-lg font-medium text-gray-800 text-center">
               <Clipboard size={20} />
               Summary
             </h3>
@@ -138,33 +138,32 @@ const Results = () => {
       <div className="space-y-6">
         {/* Basic Info */}
         <div className="bg-gray-50 p-4 rounded-lg">
-          <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
             {/* Location with Location Type as Subtext */}
             <div className="flex items-center gap-3">
               <MapPin size={16} className="text-gray-500" />
               <div className="flex flex-col">
                 <span>{resultsData.location}</span>
                 <div className="flex items-center gap-1 text-xs text-gray-500">
-                  <MapPin size={12} className="text-gray-400" />
                   <span>{resultsData.location_type}</span>
                 </div>
               </div>
             </div>
 
             {/* Job Type */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" text-sm>
               <Briefcase size={16} className="text-gray-500" />
               <span>{resultsData.job_type}</span>
             </div>
 
             {/* Date Posted */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-sm">
               <Clock size={16} className="text-gray-500" />
               <span>Posted {resultsData.date_posted}</span>
             </div>
 
             {/* Salary */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-sm">
               <CircleDollarSign size={16} className="text-gray-500" />
               <span>{resultsData.salary}</span>
             </div>

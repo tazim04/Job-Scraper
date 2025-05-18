@@ -21,8 +21,7 @@ try {
   // Replace placeholders with environment variables
   manifest = manifest
     .replace("${KEY}", process.env.KEY || "")
-    .replace("${VITE_OAUTH_CLIENT_ID}", process.env.VITE_OAUTH_CLIENT_ID || "")
-    .replace("${BACKEND_URL}", process.env.BACKEND_URL || "");
+    .replace("${VITE_OAUTH_CLIENT_ID}", process.env.VITE_OAUTH_CLIENT_ID || "");
 
   // Write the new `manifest.json`
   await writeFile(manifestPath, manifest, "utf8");

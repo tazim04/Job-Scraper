@@ -59,18 +59,14 @@ export const fetchAnalysis = async (
       let friendlyMessage =
         rawError || "An unknown error occurred during analysis.";
 
-      // Detect and extract wait time from Groq rate limit error
+      // Detect Groq rate limit error
       const isRateLimitError =
         typeof rawError === "string" &&
         rawError.includes("rate_limit_exceeded") &&
         rawError.includes("tokens per day");
 
       if (isRateLimitError) {
-        const waitTimeMatch = rawError.match(/try again in (\d+m\d+\.\d+s)/i);
-        const waitTime = waitTimeMatch
-          ? waitTimeMatch[1].replace(/\.?\d*s/, "s")
-          : "a while";
-        friendlyMessage = `We've reached our current AI usage limit. Please try again in ${waitTime}.`;
+        friendlyMessage = `We've reached our current AI usage limit. Please try again tomorrow.`;
       }
 
       return {
