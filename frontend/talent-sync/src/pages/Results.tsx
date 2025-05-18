@@ -9,6 +9,7 @@ import {
   Lightbulb,
   ArrowLeft,
   CircleDollarSign,
+  Check,
 } from "lucide-react";
 import { ReactNode } from "react";
 import { useNavigate } from "../hooks/useNavigate";
@@ -174,12 +175,21 @@ const Results = () => {
         <div className="space-y-4">
           <Section title="Key Technologies" icon={<ClipboardList size={18} />}>
             <div className="flex flex-wrap gap-2">
-              {resultsData.key_technologies?.map((tech, index) => (
+              {resultsData.key_technologies?.map((techObj, index) => (
                 <span
                   key={index}
-                  className="bg-blue-100 px-2 py-1 rounded text-sm"
+                  className={`px-2 py-1 rounded text-sm flex items-center gap-1 ${
+                    techObj.has_technology
+                      ? "bg-green-100 border border-green-300"
+                      : "bg-gray-100"
+                  }`}
                 >
-                  {tech}
+                  {techObj.technology}
+                  {techObj.has_technology && (
+                    <span className="text-green-600">
+                      <Check size={16} />
+                    </span>
+                  )}
                 </span>
               ))}
             </div>
@@ -187,12 +197,21 @@ const Results = () => {
 
           <Section title="Required Skills" icon={<Briefcase size={18} />}>
             <div className="flex flex-wrap gap-2">
-              {resultsData.key_skills?.map((skill, index) => (
+              {resultsData.key_skills?.map((skillObj, index) => (
                 <span
                   key={index}
-                  className="bg-green-100 px-2 py-1 rounded text-sm"
+                  className={`px-2 py-1 rounded text-sm flex items-center gap-1 ${
+                    skillObj.has_skill
+                      ? "bg-green-100 border border-green-300"
+                      : "bg-gray-100"
+                  }`}
                 >
-                  {skill}
+                  {skillObj.skill}
+                  {skillObj.has_skill && (
+                    <span className="text-green-600">
+                      <Check size={16} />
+                    </span>
+                  )}
                 </span>
               ))}
             </div>
