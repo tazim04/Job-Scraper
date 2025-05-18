@@ -82,7 +82,7 @@ class Comparer:
 
             OUTPUT JSON STRUCTURE:
             {{
-            "summary": "Clear, concise, short overview of the position. Maximum 2-3 sentences.",
+            "summary": "Clear, concise, short overview of the position. Maximum 1-2 sentences. Don't include any info that will be mentioned later (ex: salary, key technologies, key skills, etc).",
             "key_technologies": [
                 {{
                 "technology": "Technology name with correct capitalization",
