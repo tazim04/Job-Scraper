@@ -142,7 +142,7 @@ const Results = () => {
           <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
             {/* Location with Location Type as Subtext */}
             <div className="flex items-center gap-3">
-              <MapPin size={16} className="text-gray-500" />
+              <MapPin size={20} className="text-gray-500" />
               <div className="flex flex-col">
                 <span>{resultsData.location}</span>
                 <div className="flex items-center gap-1 text-xs text-gray-500">
@@ -165,7 +165,7 @@ const Results = () => {
 
             {/* Salary */}
             <div className="flex items-center gap-2 text-sm">
-              <CircleDollarSign size={16} className="text-gray-500" />
+              <CircleDollarSign size={20} className="text-gray-500" />
               <span>{resultsData.salary}</span>
             </div>
           </div>
