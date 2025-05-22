@@ -1,7 +1,7 @@
 import axios from "axios";
 import { logInfo, logError } from "../utils/logger";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
-import { AWSCredentials } from "../types/AWSCredentials";
+import { AWSCredentials } from "../types/awsCredentials";
 
 const REGION = import.meta.env.VITE_AWS_REGION;
 

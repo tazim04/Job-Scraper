@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import User from "../types/User";
+import User from "../types/user";
 import { getChromeStorage, setChromeStorage } from "../utils/chromeStorage";
 import { getResumeUrl } from "../api/resume";
-import { AWSCredentials } from "../types/AWSCredentials";
+import { AWSCredentials } from "../types/awsCredentials";
 import { useAuth } from "../hooks/useAuth";
 import { logInfo } from "../utils/logger";
 

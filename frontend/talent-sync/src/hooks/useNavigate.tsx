@@ -9,7 +9,7 @@ import { useUser } from "../context/userContext";
 import { logInfo } from "../utils/logger";
 import NavigateOptions from "../types/navigation/NavigateOptions";
 import { Page, SubPage } from "../types/navigation/Page";
-import JobResult from "../types/JobResult";
+import JobResult from "../types/jobResult";
 
 // Define context type
 type NavigateContextType = {

@@ -1,5 +1,5 @@
 import { Page, SubPage } from "./Page";
-import JobResult from "../JobResult";
+import JobResult from "../jobResult";
 
 export type NavigateOptions = {
   page: Page;

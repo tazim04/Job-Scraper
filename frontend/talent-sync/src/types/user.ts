@@ -1,4 +1,4 @@
-import { AWSCredentials } from "./AWSCredentials";
+import { AWSCredentials } from "./awsCredentials";
 
 export type User = {
   name: string;

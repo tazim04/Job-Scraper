@@ -3,7 +3,7 @@ import {
   fromCognitoIdentityPool,
   CognitoIdentityCredentialProvider,
 } from "@aws-sdk/credential-provider-cognito-identity";
-import { AWSCredentials } from "../types/AWSCredentials";
+import { AWSCredentials } from "../types/awsCredentials";
 
 const REGION = import.meta.env.VITE_AWS_REGION;
 const IDENTITY_POOL_ID = import.meta.env.VITE_COGNITO_IDENTITY_POOL_ID;
