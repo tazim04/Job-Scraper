@@ -9,14 +9,7 @@
     "default_popup": "index.html",
     "default_icon": "icon.png"
   },
-  "permissions": [
-    "identity",
-    "storage",
-    "tabs",
-    "cookies",
-    "activeTab",
-    "windows"
-  ],
+  "permissions": ["identity", "storage", "tabs", "activeTab"],
   "host_permissions": [
     "https://www.googleapis.com/*",
     "https://www.linkedin.com/*"
